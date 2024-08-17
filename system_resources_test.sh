@@ -3,8 +3,8 @@
 #checks for system resources (can be memory, cpu, disk, all of the above and/or more)
 
 # Thresholds
-MEMORY_THRESHOLD=80      # 80% memory usage
-DISK_THRESHOLD=80        # 80% disk usage
+MEMORY_THRESHOLD=90      # 80% memory usage
+DISK_THRESHOLD=90        # 80% disk usage
 
 # Function to check memory usage
 check_memory() {
