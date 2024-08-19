@@ -1,166 +1,52 @@
 # Kura Labs Cohort 5- Deployment Workload 2
 ## CICD with AWS CLI:
 
-Welcome to Deployment Workload 2!  In the first deployment workload, we manually uploaded the source code to AWS EB.  Let’s start automating more of that pipeline.  
 
-Be sure to document each step in the process and explain WHY each step is important to the pipeline.
+## Documentation
+I began with Step 3, creating a t2.micro EC2 for the Jenkins Server using instructions from Workload 1, so I could have a terminal to work with. I added the following security groups with source 0.0.0.0/0 to the inbound rules, which essentially allows traffic from any IP address so it’s accessible to the public. 
 
-## Instructions
+TCP 22 (SSH Access): Allows Secure Shell (SSH) access to the EC2 instance, enabling remote management.
 
-1. Clone this repo to your GitHub account
+TCP 80 (HTTP): Allows web traffic to reach a web server running on the instance, such as Apache or Nginx, which typically listens on port 80.
 
-2. Create AWS Access Keys:
+TCP 8080 (Jenkins): Allows access to Jenkins, an automation server often used for continuous integration/continuous deployment (CI/CD) pipelines. Jenkins commonly runs on port 8080.
 
-   a. Navigate to the AWS servce: IAM (search for this in the AWS console)
+For step 2F (Create AWS Access Keys), I went with CLI for the use case since the type was not specified in the directions.
 
-   b. Click on "Users" on the left side navigation panel
+The BASH script "system_resources_test.sh" that checks for system resources (specifically memory and disk space) using conditional statements and exit codes (0 or 1) if any resource exceeds a certain threshold. At first, I set the threshold to 80 but the exit code would get activated later in the process so I changed the threshold to 90 and it seemed to fix the issue.
 
-   c. Click on your User Name
+Exit codes are crucial in CI/CD pipelines because they provide a simple and effective way to determine the outcome of each stage in the pipeline. They help automate decision-making, ensure that only successful operations are promoted, and provide quick feedback to developers, contributing to a more reliable and efficient development process.
 
-   d. Underneath the "Summary" section, click on the "Security credentials" tab
+Install AWS CLI on the Jenkins Server:
 
-   e. Scroll down to "Access keys" and click on "Create access key"
+The CLI enables Jenkins to push code to AWS services, start deployments, or retrieve deployment statuses. If you're using EC2 instances for hosting your application, the CLI could be used to perform rolling updates by creating new instances with the updated application and then terminating the old ones. Jenkins can scale AWS resources based on demand by invoking CLI commands to modify the auto-scaling groups or launch new instances.
 
-   f. Select the appropriate "use case", and then click "Next" and then "Create access key"
+Switch to the jenkins user by running:
+sudo su - jenkins
 
- ACCESS KEYS CAN ONLY BE VIEWED ONCE! 
- 
- Be sure to save them somewhere (you will need these later) and NEVER upload the keys to any public repository.  
-
-NOTE: What are access keys and why would sharing them be dangerous? 
-
-
-3. Create a t2.micro EC2 for your Jenkins Server (IMPORTANT: include ALL commands from Workload 1 step 3b to do so)
-
-4. Create a BASH script called "system_resources_test.sh" that checks for system resources (can be memory, cpu, disk, all of the above and/or more) and push it to the GH repo. IMPORTANT: make sure you use conditional statements and exit codes (0 or 1) if any resource exceeds a certain threshold.
-
-SEE: https://www.geeksforgeeks.org/how-to-use-exit-code-to-read-from-terminal-from-script-and-with-logical-operators/ for more information
-
-Note: Why are exit codes important? Especially if running the script through a CICD Pipeline?
-
-5. Create a MultiBranch Pipeline and connect your GH repo to it (build should start automatically)
-
-6. Back in the Jenkins Server Terminal- Install AWS CLI on the Jenkins Server with the following commands:
-
-```
-$curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-$unzip awscliv2.zip
-$sudo ./aws/install
-$aws --version 
-```
-
-If AWS CLI was installed properly the version number will output to the terminal.
-
-7. Switch to the user "jenkins"
-
-    a. create a password for the user "jenkins" by running: 
-  
-  ```
-  $sudo passwd jenkins
-  ```
-
-  b. switch to the jenkins user by running:
-
-  ```
-  sudo su - jenkins
-  ```
-
-8. Navigate to the pipeline directory within the jenkins "workspace"
-
-```
-cd workspace/[name-of-multibranch-pipeline]
-```
-
-you should be able to see the application source code from this directory
-
-9. Activate the Python Virtual Environment
-
-```
+Activate the Python Virtual Environment
 source venv/bin/activate
-```
-NOTE: Python Virtual Environments are usually created by running the command `python3 -m venv [name-of-environment]`.  What is a virtual environment? Why is it important/necessary? and when was this one (venv) created? HINT: See step 13 below.
+
+A Python virtual environment is an isolated environment that allows you to install and manage Python packages and dependencies for a specific project without affecting the global Python installation or other projects on the same machine. It essentially creates a self-contained directory that contains its own installation of Python, along with any libraries or dependencies you install while the environment is active. This particular venv was created when running the JenkinsFile in the build section of the code.
+
+How a Deploy Stage in the CI/CD Pipeline Increases Business Efficiency
+1. Speed and Consistency:
+	Faster Deployments: Automating the deployment process reduces the time it takes to push new features, updates, or bug fixes to production. This enables quicker responses to market demands or customer feedback, increasing the business's ability to adapt and innovate.
+	Continuous Delivery: A deploy stage in the CI/CD pipeline enables continuous delivery of software, ensuring that new code can be released to production as soon as it’s ready, without manual intervention. This improves the overall time-to-market.
+	Reducing Human Error: Automated deployments reduce the risk of mistakes that can occur during manual deployments (misconfigurations, missing steps, or incorrect environments)
+	Standardized Process: A deploy stage ensures that every deployment follows the same process, adhering to best practices and compliance requirements.
+2. Scalability:
+	Handling Multiple Deployments: With automation, the business can easily scale its operations to handle multiple deployments across different environments or services without a proportional increase in effort or complexity.
+	Resource Optimization: Automated deployments can be scheduled or triggered based on specific conditions, ensuring that resources are used efficiently, and downtime is minimized.
+3. Enhanced Collaboration and Communication:
+	Improved Developer Productivity: By automating deployments, developers spend less time on manual tasks and more time on writing code and innovating, boosting overall productivity!
+	Clearer Communication: Automated pipelines often include notifications and logging, ensuring that all stakeholders are informed of deployment statuses and any issues that arise. This transparency improves collaboration across teams.
+## Potential Issues with Automating Source Code Deployment to Production
+1. Configuration Drift:
+	Issue: Over time, differences can arise between the configurations of development, staging, and production environments, leading to inconsistencies that can cause deployment failures.
+	Resolution: Use Infrastructure as Code (IaC) tools like Terraform or AWS CloudFormation to manage environment configurations consistently across all stages. Ensure that the pipeline includes steps to validate and sync configurations across environments before deployment.
+2. Lack of Human Oversight:
+	Issue: Fully automated pipelines can sometimes lead to a lack of human oversight, where critical business decisions or last-minute checks are bypassed, potentially leading to issues in production.
+	Resolution: Introduce manual approval stages in the pipeline for critical deployments, where a human can review and approve the deployment before it proceeds. This is particularly important for high-risk changes or deployments during sensitive periods (e.g., peak business hours).
 
 
-10. Install AWS EB CLI on the Jenkins Server with the following commands:
-
-```
-$pip install awsebcli
-$eb --version
-```
-If AWS EB CLI was installed properly the version number will output to the terminal
-
-11. Configure AWS CLI with the folling command:
-
-```
-$aws configure
-```
-   a. Enter your access key
-
-   b. Enter your secret access key
-
-   c. region: "us-east-1"
-
-   d. output format" "json"
-
-   e. check to see if AWS CLI has been configured by entering:
-
-``` 
-$aws ec2 describe-instances 
-```
-
-
-12. Initialize AWS Elastic Beanstalk CLI
-
-    a. run the following command:
-  ```
-  eb init
-  ```
-  
-   b. Set the default region to: us-east-1
-
-   c. Enter an application name (or leave it as default)
-
-   d. Select python3.7
-
-   e. Select "no" for code commit
-
-   f. Select "yes" for SSH and select a "KeyPair"
-
-13. Add a "deploy" stage to the Jenkinsfile 
-
-    a. use your text editor of choice to edit the "jenkinsfile"
-
-    b. add the following code block (modify the code with your environment name and remove the square brackets) AFTER the "Test" Stage:
-
-  ```
-  stage ('Deploy') {
-            steps {
-                sh '''#!/bin/bash
-                source venv/bin/activate
-                eb create [enter-name-of-environment-here] --single
-                '''
-            }
-        }
-  ```
-IMPORTANT: THE SYNTAX OF THE JENKINSFILE IS VERY SPECIFIC! MAKE SURE THAT THE STAGES AND CURLY BRACKETS ARE IN THE CORRECT ORDER OTHERWISE THE PIPELINE WILL NOT BUILD!
-See https://www.jenkins.io/doc/book/pipeline/syntax/ for more information.
-
-  c. Push these changes to the GH Repository
-
-14. Navigate back to the Jenkins Console and build the pipeline again.
-
-If the pipeline sucessfully completes, navigate to AWS Elastic Beanstalk in the AWS Console and check for the environment that is created. The application should be running at the domain created by Elastic Beanstalk.
-
-15. Document! All projects have documentation so that others can read and understand what was done and how it was done. Create a README.md file in your repository that describes:
-
-	  a. The "PURPOSE" of the Workload,
-
-  	b. The "STEPS" taken (and why each was necessary/important,
-
-  	c. A "SYSTEM DESIGN DIAGRAM" that is created in draw.io,
-
-	  d. "ISSUES/TROUBLESHOOTING" that may or may have occured,
-
-  	e. An "OPTIMIZATION" section for that answers the question: How is using a deploy stage in the CICD pipeline able to increase efficiency of the buisiness?  What issues, if any, can you think of that might come with automating source code to a production environment? How would you address/resolve this?
-
-    f. A "CONCLUSION" statement as well as any other sections you feel like you want to include.
