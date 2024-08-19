@@ -29,7 +29,7 @@ source venv/bin/activate
 
 A Python virtual environment is an isolated environment that allows you to install and manage Python packages and dependencies for a specific project without affecting the global Python installation or other projects on the same machine. It essentially creates a self-contained directory that contains its own installation of Python, along with any libraries or dependencies you install while the environment is active. This particular venv was created when running the JenkinsFile in the build section of the code.
 
-How a Deploy Stage in the CI/CD Pipeline Increases Business Efficiency
+## How a Deploy Stage in the CI/CD Pipeline Increases Business Efficiency
 1. Speed and Consistency:
 	Faster Deployments: Automating the deployment process reduces the time it takes to push new features, updates, or bug fixes to production. This enables quicker responses to market demands or customer feedback, increasing the business's ability to adapt and innovate.
 	Continuous Delivery: A deploy stage in the CI/CD pipeline enables continuous delivery of software, ensuring that new code can be released to production as soon as it’s ready, without manual intervention. This improves the overall time-to-market.
