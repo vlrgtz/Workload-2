@@ -49,4 +49,5 @@ A Python virtual environment is an isolated environment that allows you to insta
 	Issue: Fully automated pipelines can sometimes lead to a lack of human oversight, where critical business decisions or last-minute checks are bypassed, potentially leading to issues in production.
 	Resolution: Introduce manual approval stages in the pipeline for critical deployments, where a human can review and approve the deployment before it proceeds. This is particularly important for high-risk changes or deployments during sensitive periods (e.g., peak business hours).
 
+![WL2ver3 drawio](https://github.com/user-attachments/assets/af2985f1-6ee5-4686-92a1-449c4e052652)
 
